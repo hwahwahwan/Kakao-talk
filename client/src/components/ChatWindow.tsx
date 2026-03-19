@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useChatStore } from '../store/useChatStore'
 import type { Message } from '../types'
 import Avatar from './Avatar'
@@ -8,6 +8,7 @@ import MessageInput from './MessageInput'
 
 interface Props {
   onSend: (content: string) => void
+  onLeave: () => void
 }
 
 function formatDateLabel(iso: string) {
@@ -33,7 +34,7 @@ function groupByDate(messages: Message[]) {
   return groups
 }
 
-export default function ChatWindow({ onSend }: Props) {
+export default function ChatWindow({ onSend, onLeave }: Props) {
   const me = useChatStore((s) => s.me)
   const activeRoomId = useChatStore((s) => s.activeRoomId)
   const rooms = useChatStore((s) => s.rooms)
@@ -42,6 +43,18 @@ export default function ChatWindow({ onSend }: Props) {
   const setActiveRoom = useChatStore((s) => s.setActiveRoom)
 
   const bottomRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (!menuRef.current?.contains(e.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
 
   const room = rooms.find((r) => r.id === activeRoomId)
   const roomMessages = activeRoomId ? (messages[activeRoomId] ?? []) : []
@@ -92,9 +105,25 @@ export default function ChatWindow({ onSend }: Props) {
           <HeaderBtn onClick={() => showToast('준비 중인 기능입니다')} title="화상통화">
             <VideoIcon />
           </HeaderBtn>
-          <HeaderBtn onClick={() => showToast('준비 중인 기능입니다')} title="메뉴">
-            <MenuIcon />
-          </HeaderBtn>
+          <div ref={menuRef} className="relative">
+            <button
+              onClick={() => setIsMenuOpen((v) => !v)}
+              title="메뉴"
+              className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-[#1A1A1A] transition-colors rounded-lg hover:bg-[#F9F9F9]"
+            >
+              <MenuIcon />
+            </button>
+            {isMenuOpen && (
+              <div className="absolute right-0 top-full mt-1 w-36 bg-white rounded-lg shadow-lg border border-[#EBEBEB] z-50 overflow-hidden">
+                <button
+                  onClick={() => { setIsMenuOpen(false); onLeave() }}
+                  className="w-full text-left px-4 py-2.5 text-[14px] text-red-500 hover:bg-[#F9F9F9] transition-colors"
+                >
+                  채팅방 나가기
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

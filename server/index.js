@@ -124,9 +124,44 @@ io.on('connection', (socket) => {
     io.to(roomId).emit(SOCKET_EVENTS.MESSAGE_RECEIVE, message)
   })
 
-  // 채팅방 나가기 (준비 중)
-  socket.on(SOCKET_EVENTS.ROOM_LEAVE, () => {
-    // 향후 구현
+  // 채팅방 나가기
+  socket.on(SOCKET_EVENTS.ROOM_LEAVE, ({ roomId }) => {
+    const userId = socketToUser[socket.id]
+    if (!userId) return
+
+    const room = rooms[roomId]
+    if (!room) return
+
+    const userName = users[userId]?.name ?? '알 수 없음'
+
+    // memberIds에서 제거
+    room.memberIds = room.memberIds.filter((id) => id !== userId)
+
+    // socket.io room에서 제거 (이후 io.to(roomId) 브로드캐스트에서 제외)
+    socket.leave(roomId)
+
+    // 남은 멤버에게 시스템 메시지
+    if (room.memberIds.length > 0) {
+      const sysMsg = {
+        id: crypto.randomUUID(),
+        roomId: room.id,
+        senderId: null,
+        senderName: null,
+        content: `${userName}님이 나갔습니다`,
+        type: 'system',
+        createdAt: new Date().toISOString(),
+      }
+      room.messages.push(sysMsg)
+      io.to(roomId).emit(SOCKET_EVENTS.MESSAGE_RECEIVE, sysMsg)
+    }
+
+    // 나간 유저에게 완료 응답
+    socket.emit(SOCKET_EVENTS.ROOM_LEFT, { roomId })
+
+    // 방에 멤버가 없으면 삭제
+    if (room.memberIds.length === 0) {
+      delete rooms[roomId]
+    }
   })
 
   // 연결 해제

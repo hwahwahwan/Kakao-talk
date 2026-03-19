@@ -16,6 +16,7 @@ interface ChatStore {
   setOnlineUsers: (users: User[]) => void
   addRoom: (room: Room) => void
   updateRoom: (roomId: string, patch: Partial<Room>) => void
+  removeRoom: (roomId: string) => void
   setActiveRoom: (roomId: string | null) => void
   addMessage: (message: Message) => void
   setHistory: (roomId: string, messages: Message[]) => void
@@ -57,6 +58,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     set((state) => ({
       rooms: state.rooms.map((r) => (r.id === roomId ? { ...r, ...patch } : r)),
     })),
+
+  removeRoom: (roomId) =>
+    set((state) => {
+      const newMessages = { ...state.messages }
+      delete newMessages[roomId]
+      return {
+        rooms: state.rooms.filter((r) => r.id !== roomId),
+        messages: newMessages,
+        activeRoomId: state.activeRoomId === roomId ? null : state.activeRoomId,
+      }
+    }),
 
   setActiveRoom: (roomId) => {
     set({ activeRoomId: roomId })

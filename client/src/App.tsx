@@ -19,7 +19,7 @@ export default function App() {
   const setActiveTab = useChatStore((s) => s.setActiveTab)
 
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const { joinAs, createRoom, sendMessage } = useSocket()
+  const { joinAs, createRoom, sendMessage, leaveRoom } = useSocket()
 
   const handleJoin = (name: string) => {
     joinAs(name)
@@ -49,6 +49,10 @@ export default function App() {
     sendMessage(activeRoomId, content)
   }
 
+  const handleLeave = () => {
+    if (activeRoomId) leaveRoom(activeRoomId)
+  }
+
   if (!me) {
     return (
       <>
@@ -75,7 +79,7 @@ export default function App() {
       </div>
 
       {/* 채팅창 */}
-      <ChatWindow onSend={handleSend} />
+      <ChatWindow onSend={handleSend} onLeave={handleLeave} />
 
       {/* 설정 모달 */}
       {settingsOpen && (

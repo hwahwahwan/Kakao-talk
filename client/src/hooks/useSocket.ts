@@ -51,6 +51,10 @@ export function useSocket() {
       store().addMessage(message)
     })
 
+    socket.on(SOCKET_EVENTS.ROOM_LEFT, ({ roomId }: { roomId: string }) => {
+      store().removeRoom(roomId)
+    })
+
     socket.connect()
 
     return () => {
@@ -72,5 +76,9 @@ export function useSocket() {
     socketRef.current?.emit(SOCKET_EVENTS.MESSAGE_SEND, { roomId, content })
   }
 
-  return { joinAs, createRoom, sendMessage }
+  const leaveRoom = (roomId: string) => {
+    socketRef.current?.emit(SOCKET_EVENTS.ROOM_LEAVE, { roomId })
+  }
+
+  return { joinAs, createRoom, sendMessage, leaveRoom }
 }

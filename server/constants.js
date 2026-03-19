@@ -11,6 +11,7 @@ const SOCKET_EVENTS = {
   ROOM_INVITED: 'room:invited',
   ROOM_LIST: 'room:list',
   ROOM_LEAVE: 'room:leave',
+  ROOM_LEFT: 'room:left',
   ROOM_ERROR: 'room:error',
   // 메시지
   MESSAGE_SEND: 'message:send',
