@@ -64,3 +64,12 @@
 - [x] 빈 상태 UI 확인 (친구 없음, 채팅방 없음)
 - [x] 기본 에러 처리 (연결 끊김 안내)
 - [x] 카카오 옐로우 테마 최종 확인
+
+## Phase 7 — 다국어 번역 (MyMemory API)
+- [x] `server/translate.js` 번역 유틸 작성
+- [x] `server/index.js` MESSAGE_SEND async + 번역 추가
+- [x] `client/src/types/index.ts` Message에 translatedContent, sourceLang 추가
+- [x] `client/src/store/useChatStore.ts` myLang 상태 추가
+- [x] `client/src/components/LoginScreen.tsx` 언어 선택 드롭다운
+- [x] `client/src/hooks/useSocket.ts` sendMessage에 sourceLang 포함
+- [x] `client/src/components/MessageBubble.tsx` 번역문 표시 + 원문 토글

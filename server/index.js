@@ -5,6 +5,7 @@ const { Server } = require('socket.io')
 const cors = require('cors')
 const crypto = require('crypto')
 const { SOCKET_EVENTS } = require('./constants')
+const { translateToKorean } = require('./translate')
 
 const PORT = parseInt(process.env.PORT, 10) || 4000
 const CLIENT_URL = process.env.CLIENT_URL ?? 'http://localhost:3000'
@@ -203,6 +204,14 @@ io.on('connection', (socket) => {
 })
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }))
+
+app.get('/translate', async (req, res) => {
+  const text = req.query.text
+  if (!text) return res.status(400).json({ error: 'text required' })
+  const translated = await translateToKorean(text)
+  if (!translated) return res.status(422).json({ error: '번역 실패' })
+  res.json({ translated })
+})
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

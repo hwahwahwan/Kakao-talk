@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { io, Socket } from 'socket.io-client'
+import { io, type Socket } from 'socket.io-client'
 import { useChatStore } from '../store/useChatStore'
 import { SOCKET_EVENTS } from '../constants'
 import type { Message, Room } from '../types'

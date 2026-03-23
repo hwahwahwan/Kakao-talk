@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import type { Message } from '../types'
+
+const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
 
 interface Props {
   message: Message
@@ -14,6 +17,10 @@ function formatTime(iso: string) {
 }
 
 export default function MessageBubble({ message, isMine }: Props) {
+  const [translated, setTranslated] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [showTranslated, setShowTranslated] = useState(false)
+
   if (message.type === 'system') {
     return (
       <div className="flex justify-center my-1">
@@ -22,6 +29,28 @@ export default function MessageBubble({ message, isMine }: Props) {
         </span>
       </div>
     )
+  }
+
+  const handleTranslate = async () => {
+    if (showTranslated) {
+      setShowTranslated(false)
+      return
+    }
+    if (translated) {
+      setShowTranslated(true)
+      return
+    }
+    setLoading(true)
+    try {
+      const res = await fetch(`${SERVER_URL}/translate?text=${encodeURIComponent(message.content)}`)
+      const data = await res.json()
+      if (data.translated) {
+        setTranslated(data.translated)
+        setShowTranslated(true)
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -34,7 +63,23 @@ export default function MessageBubble({ message, isMine }: Props) {
         }`}
         style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.08)' }}
       >
-        {message.content}
+        {showTranslated && translated ? (
+          <>
+            <span>{translated}</span>
+            <div className="mt-1 pt-1 border-t border-black/10 text-[12px] text-[#888888]">{message.content}</div>
+          </>
+        ) : (
+          message.content
+        )}
+        {!isMine && !/^[\uAC00-\uD7A3\s\d\p{P}]+$/u.test(message.content) && (
+          <button
+            onClick={handleTranslate}
+            disabled={loading}
+            className="block mt-1 text-[11px] text-[#888888] hover:text-[#555555] transition-colors disabled:opacity-50"
+          >
+            {loading ? '번역 중...' : showTranslated ? '원문만 보기' : '번역'}
+          </button>
+        )}
       </div>
       <span className="text-[11px] text-[#888888] flex-shrink-0 mb-0.5">
         {formatTime(message.createdAt)}
