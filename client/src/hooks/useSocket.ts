@@ -63,8 +63,8 @@ export function useSocket() {
     }
   }, [])
 
-  const joinAs = (name: string) => {
-    socketRef.current?.emit(SOCKET_EVENTS.USER_JOIN, { name })
+  const joinAs = (name: string, email: string) => {
+    socketRef.current?.emit(SOCKET_EVENTS.USER_JOIN, { name, email })
   }
 
   const createRoom = (targetUserId: string) => {

@@ -38,9 +38,9 @@ function hydrateRoom(room) {
 
 io.on('connection', (socket) => {
   // 유저 입장
-  socket.on(SOCKET_EVENTS.USER_JOIN, ({ name }) => {
+  socket.on(SOCKET_EVENTS.USER_JOIN, ({ name, email }) => {
     const userId = crypto.randomUUID()
-    const user = { id: userId, name, socketId: socket.id }
+    const user = { id: userId, name, email: email ?? '', socketId: socket.id }
     users[userId] = user
     socketToUser[socket.id] = userId
 
@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
       .map(({ id, name }) => ({ id, name }))
 
     socket.emit(SOCKET_EVENTS.USER_JOINED, {
-      me: { id: userId, name },
+      me: { id: userId, name, email: user.email },
       onlineUsers,
     })
 
@@ -74,6 +74,8 @@ io.on('connection', (socket) => {
 
     if (!rooms[roomId]) {
       rooms[roomId] = { id: roomId, memberIds: [userId, targetUserId], messages: [] }
+    } else if (!rooms[roomId].memberIds.includes(userId)) {
+      rooms[roomId].memberIds.push(userId)
     }
 
     const room = rooms[roomId]

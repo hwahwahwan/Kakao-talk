@@ -21,8 +21,8 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const { joinAs, createRoom, sendMessage, leaveRoom } = useSocket()
 
-  const handleJoin = (name: string) => {
-    joinAs(name)
+  const handleJoin = (name: string, email: string) => {
+    joinAs(name, email)
   }
 
   const handleFriendClick = (userId: string) => {
@@ -56,7 +56,7 @@ export default function App() {
   if (!me) {
     return (
       <>
-        <LoginScreen onJoin={handleJoin} />
+        <LoginScreen onJoin={(name, email) => handleJoin(name, email)} />
         <ToastMessage />
       </>
     )
