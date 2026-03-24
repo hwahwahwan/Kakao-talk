@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import type { KeyboardEvent } from 'react'
-import { DUMMY_USERS } from '../data/dummyUsers'
 
 interface Props {
-  onJoin: (name: string, email: string) => void
+  onJoin: (email: string, password: string) => void
+  serverError?: string | null
+  onClearServerError?: () => void
 }
 
-export default function LoginScreen({ onJoin }: Props) {
+export default function LoginScreen({ onJoin, serverError, onClearServerError }: Props) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -24,18 +25,8 @@ export default function LoginScreen({ onJoin }: Props) {
       return
     }
 
-    const user = DUMMY_USERS.find((u) => u.email === trimmedEmail)
-    if (!user) {
-      setError('등록되지 않은 이메일입니다')
-      return
-    }
-    if (trimmedPassword !== user.password) {
-      setError('비밀번호가 올바르지 않습니다')
-      return
-    }
-
     setError('')
-    onJoin(user.name, user.email)
+    onJoin(trimmedEmail, trimmedPassword)
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -73,6 +64,17 @@ export default function LoginScreen({ onJoin }: Props) {
           />
           {error && (
             <p className="text-[12px] text-red-500 px-1">{error}</p>
+          )}
+          {serverError && (
+            <div className="flex items-center justify-between bg-red-50 border border-red-200 text-red-600 text-[13px] px-3 py-2 rounded-lg">
+              <span>{serverError}</span>
+              <button
+                onClick={onClearServerError}
+                className="ml-2 text-red-400 hover:text-red-600 leading-none"
+              >
+                ✕
+              </button>
+            </div>
           )}
         </div>
 

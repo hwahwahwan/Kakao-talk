@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Message } from '../types'
-
-const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
+import { translateToKorean } from '../services/translateService'
+import { isKorean } from '../utils/language'
 
 interface Props {
   message: Message
@@ -42,16 +42,17 @@ export default function MessageBubble({ message, isMine }: Props) {
     }
     setLoading(true)
     try {
-      const res = await fetch(`${SERVER_URL}/translate?text=${encodeURIComponent(message.content)}`)
-      const data = await res.json()
-      if (data.translated) {
-        setTranslated(data.translated)
+      const result = await translateToKorean(message.content)
+      if (result) {
+        setTranslated(result)
         setShowTranslated(true)
       }
     } finally {
       setLoading(false)
     }
   }
+
+  const showTranslateBtn = !isMine && !isKorean(message.content)
 
   return (
     <div className={`flex items-end gap-1.5 mb-1 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -66,12 +67,14 @@ export default function MessageBubble({ message, isMine }: Props) {
         {showTranslated && translated ? (
           <>
             <span>{translated}</span>
-            <div className="mt-1 pt-1 border-t border-black/10 text-[12px] text-[#888888]">{message.content}</div>
+            <div className="mt-1 pt-1 border-t border-black/10 text-[12px] text-[#888888]">
+              {message.content}
+            </div>
           </>
         ) : (
           message.content
         )}
-        {!isMine && !/^[\uAC00-\uD7A3\s\d\p{P}]+$/u.test(message.content) && (
+        {showTranslateBtn && (
           <button
             onClick={handleTranslate}
             disabled={loading}

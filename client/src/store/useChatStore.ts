@@ -4,7 +4,6 @@ import { LAYOUT } from '../constants'
 
 interface ChatStore {
   me: User | null
-  myLang: string
   onlineUsers: User[]
   rooms: Room[]
   activeRoomId: string | null
@@ -14,7 +13,6 @@ interface ChatStore {
   _toastTimer: ReturnType<typeof setTimeout> | null
 
   setMe: (user: User) => void
-  setMyLang: (lang: string) => void
   setOnlineUsers: (users: User[]) => void
   addRoom: (room: Room) => void
   updateRoom: (roomId: string, patch: Partial<Room>) => void
@@ -31,7 +29,6 @@ interface ChatStore {
 
 export const useChatStore = create<ChatStore>((set, get) => ({
   me: null,
-  myLang: 'KO',
   onlineUsers: [],
   rooms: [],
   activeRoomId: null,
@@ -41,7 +38,6 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   _toastTimer: null,
 
   setMe: (user) => set({ me: user }),
-  setMyLang: (lang) => set({ myLang: lang }),
 
   setOnlineUsers: (users) => set({ onlineUsers: users }),
 

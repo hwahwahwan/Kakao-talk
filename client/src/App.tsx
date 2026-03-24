@@ -19,10 +19,10 @@ export default function App() {
   const setActiveTab = useChatStore((s) => s.setActiveTab)
 
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const { joinAs, createRoom, sendMessage, leaveRoom } = useSocket()
+  const { joinAs, createRoom, sendMessage, leaveRoom, loginError, clearLoginError } = useSocket()
 
-  const handleJoin = (name: string, email: string) => {
-    joinAs(name, email)
+  const handleJoin = (email: string, password: string) => {
+    joinAs(email, password)
   }
 
   const handleFriendClick = (userId: string) => {
@@ -56,7 +56,11 @@ export default function App() {
   if (!me) {
     return (
       <>
-        <LoginScreen onJoin={(name, email) => handleJoin(name, email)} />
+        <LoginScreen
+            onJoin={(email, password) => handleJoin(email, password)}
+            serverError={loginError}
+            onClearServerError={clearLoginError}
+          />
         <ToastMessage />
       </>
     )

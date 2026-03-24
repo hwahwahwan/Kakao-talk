@@ -16,6 +16,11 @@ const SOCKET_EVENTS = {
   // 메시지
   MESSAGE_SEND: 'message:send',
   MESSAGE_RECEIVE: 'message:receive',
+  // 재접속
+  ROOM_REJOIN: 'room:rejoin',
+  ROOM_REJOINED: 'room:rejoined',
+  // 인증
+  USER_JOIN_ERROR: 'user:join_error',
 }
 
 module.exports = { SOCKET_EVENTS }

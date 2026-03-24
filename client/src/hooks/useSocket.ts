@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { io, type Socket } from 'socket.io-client'
 import { useChatStore } from '../store/useChatStore'
 import { SOCKET_EVENTS } from '../constants'
@@ -9,6 +9,7 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
 export function useSocket() {
   const socketRef = useRef<Socket | null>(null)
   const store = useChatStore.getState
+  const [loginError, setLoginError] = useState<string | null>(null)
 
   useEffect(() => {
     if (socketRef.current) return
@@ -16,9 +17,21 @@ export function useSocket() {
     const socket = io(SERVER_URL, { autoConnect: false })
     socketRef.current = socket
 
-    socket.on(SOCKET_EVENTS.USER_JOINED, ({ me, onlineUsers }) => {
+    socket.on(SOCKET_EVENTS.USER_JOINED, ({ me, onlineUsers, rooms }) => {
       store().setMe(me)
       store().setOnlineUsers(onlineUsers)
+      rooms.forEach((room: Room) => {
+        store().addRoom({ ...room, unreadCount: 0 })
+        socket.emit(SOCKET_EVENTS.ROOM_REJOIN, { roomId: room.id })
+      })
+    })
+
+    socket.on(SOCKET_EVENTS.USER_JOIN_ERROR, ({ message }: { message: string }) => {
+      setLoginError(message)
+    })
+
+    socket.on(SOCKET_EVENTS.ROOM_REJOINED, ({ roomId, history }: { roomId: string; history: Message[] }) => {
+      store().setHistory(roomId, history)
     })
 
     socket.on(SOCKET_EVENTS.USER_LIST, ({ users }) => {
@@ -63,8 +76,8 @@ export function useSocket() {
     }
   }, [])
 
-  const joinAs = (name: string, email: string) => {
-    socketRef.current?.emit(SOCKET_EVENTS.USER_JOIN, { name, email })
+  const joinAs = (email: string, password: string) => {
+    socketRef.current?.emit(SOCKET_EVENTS.USER_JOIN, { email, password })
   }
 
   const createRoom = (targetUserId: string) => {
@@ -80,5 +93,5 @@ export function useSocket() {
     socketRef.current?.emit(SOCKET_EVENTS.ROOM_LEAVE, { roomId })
   }
 
-  return { joinAs, createRoom, sendMessage, leaveRoom }
+  return { joinAs, createRoom, sendMessage, leaveRoom, loginError, clearLoginError: () => setLoginError(null) }
 }
