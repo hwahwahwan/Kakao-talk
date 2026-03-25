@@ -48,9 +48,7 @@ export default function ChatWindow({ onSend, onLeave }: Props) {
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (!menuRef.current?.contains(e.target as Node)) {
-        setIsMenuOpen(false)
-      }
+      if (!menuRef.current?.contains(e.target as Node)) setIsMenuOpen(false)
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
@@ -59,7 +57,6 @@ export default function ChatWindow({ onSend, onLeave }: Props) {
   const room = rooms.find((r) => r.id === activeRoomId)
   const roomMessages = activeRoomId ? (messages[activeRoomId] ?? []) : []
   const groups = groupByDate(roomMessages)
-
   const roomName = room?.members.find((m) => m.id !== me?.id)?.name ?? '알 수 없음'
   const memberCount = room?.members.length ?? 0
 
@@ -92,7 +89,10 @@ export default function ChatWindow({ onSend, onLeave }: Props) {
           <Avatar name={roomName} size={36} />
           <div>
             <div className="text-[14px] font-semibold text-[#1A1A1A]">{roomName}</div>
-            <div className="text-[12px] text-[#888888]">{memberCount}명</div>
+            <div className="flex items-center gap-0.5 text-[12px] text-[#888888]">
+              <PersonIcon />
+              <span>{memberCount}</span>
+            </div>
           </div>
         </div>
         <div className="flex gap-1">
@@ -132,13 +132,20 @@ export default function ChatWindow({ onSend, onLeave }: Props) {
         {groups.map((group) => (
           <div key={group.date}>
             <DateDivider date={group.date} />
-            {group.messages.map((msg) => (
-              <MessageBubble
-                key={msg.id}
-                message={msg}
-                isMine={msg.senderId === me?.id}
-              />
-            ))}
+            {group.messages.map((msg, index) => {
+              const isMine = msg.senderId === me?.id
+              const prev = group.messages[index - 1]
+              const showSenderName =
+                !isMine && (index === 0 || prev.senderId !== msg.senderId)
+              return (
+                <MessageBubble
+                  key={msg.id}
+                  message={msg}
+                  isMine={isMine}
+                  showSenderName={showSenderName}
+                />
+              )
+            })}
           </div>
         ))}
         <div ref={bottomRef} />
@@ -150,11 +157,31 @@ export default function ChatWindow({ onSend, onLeave }: Props) {
   )
 }
 
-function HeaderBtn({ onClick, title, children }: { onClick: () => void; title: string; children: React.ReactNode }) {
+function HeaderBtn({
+  onClick,
+  title,
+  children,
+}: {
+  onClick: () => void
+  title: string
+  children: React.ReactNode
+}) {
   return (
-    <button onClick={onClick} title={title} className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-[#1A1A1A] transition-colors rounded-lg hover:bg-[#F9F9F9]">
+    <button
+      onClick={onClick}
+      title={title}
+      className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-[#1A1A1A] transition-colors rounded-lg hover:bg-[#F9F9F9]"
+    >
       {children}
     </button>
+  )
+}
+
+function PersonIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+    </svg>
   )
 }
 

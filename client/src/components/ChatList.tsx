@@ -3,23 +3,10 @@ import type { Room } from '../types'
 import Avatar from './Avatar'
 import Badge from './Badge'
 import FilterChips from './FilterChips'
+import { formatChatTime } from '../utils/format'
 
 interface Props {
   onRoomClick: (roomId: string) => void
-}
-
-function formatTime(iso: string) {
-  const d = new Date(iso)
-  const now = new Date()
-  const isToday =
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate()
-
-  if (isToday) {
-    return d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })
-  }
-  return d.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })
 }
 
 export default function ChatList({ onRoomClick }: Props) {
@@ -34,9 +21,8 @@ export default function ChatList({ onRoomClick }: Props) {
     return bTime.localeCompare(aTime)
   })
 
-  const getRoomName = (room: Room) => {
-    return room.members.find((m) => m.id !== me?.id)?.name ?? '알 수 없음'
-  }
+  const getRoomName = (room: Room) =>
+    room.members.find((m) => m.id !== me?.id)?.name ?? '알 수 없음'
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -77,29 +63,28 @@ export default function ChatList({ onRoomClick }: Props) {
                 <li key={room.id}>
                   <button
                     onClick={() => onRoomClick(room.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 transition-colors ${
+                    className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${
                       activeRoomId === room.id ? 'bg-[#F9F9F9]' : 'hover:bg-[#F9F9F9]'
                     }`}
-                    style={{ height: 60 }}
                   >
                     <Avatar name={name} size={40} />
                     <div className="flex-1 min-w-0 text-left">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[14px] font-semibold text-[#1A1A1A] truncate">{name}</span>
-                        {room.lastMessage && (
-                          <span className="text-[12px] text-[#888888] flex-shrink-0 ml-2">
-                            {formatTime(room.lastMessage.createdAt)}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between mt-0.5">
-                        <span className="text-[13px] text-[#888888] truncate">
-                          {room.lastMessage?.content ?? ''}
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="text-[14px] font-semibold text-[#1A1A1A] truncate">
+                          {name}
                         </span>
-                        <div className="ml-2 flex-shrink-0">
+                        <div className="flex flex-col items-end flex-shrink-0 gap-0.5">
+                          {room.lastMessage && (
+                            <span className="text-[12px] text-[#888888]">
+                              {formatChatTime(room.lastMessage.createdAt)}
+                            </span>
+                          )}
                           <Badge count={room.unreadCount} />
                         </div>
                       </div>
+                      <p className="text-[13px] text-[#888888] line-clamp-2 mt-0.5">
+                        {room.lastMessage?.content ?? ''}
+                      </p>
                     </div>
                   </button>
                 </li>
@@ -112,9 +97,21 @@ export default function ChatList({ onRoomClick }: Props) {
   )
 }
 
-function IconBtn({ onClick, title, children }: { onClick: () => void; title: string; children: React.ReactNode }) {
+function IconBtn({
+  onClick,
+  title,
+  children,
+}: {
+  onClick: () => void
+  title: string
+  children: React.ReactNode
+}) {
   return (
-    <button onClick={onClick} title={title} className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-[#1A1A1A] transition-colors rounded-lg hover:bg-[#F9F9F9]">
+    <button
+      onClick={onClick}
+      title={title}
+      className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-[#1A1A1A] transition-colors rounded-lg hover:bg-[#F9F9F9]"
+    >
       {children}
     </button>
   )

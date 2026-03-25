@@ -9,6 +9,7 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
 export function useSocket() {
   const socketRef = useRef<Socket | null>(null)
   const store = useChatStore.getState
+  const credentialsRef = useRef<{ email: string; password: string } | null>(null)
   const [loginError, setLoginError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -68,6 +69,19 @@ export function useSocket() {
       store().removeRoom(roomId)
     })
 
+    socket.on('disconnect', (reason) => {
+      if (reason !== 'io client disconnect') {
+        store().reset()
+      }
+    })
+
+    socket.on('reconnect', () => {
+      const creds = credentialsRef.current
+      if (creds) {
+        socket.emit(SOCKET_EVENTS.USER_JOIN, creds)
+      }
+    })
+
     socket.connect()
 
     return () => {
@@ -77,6 +91,7 @@ export function useSocket() {
   }, [])
 
   const joinAs = (email: string, password: string) => {
+    credentialsRef.current = { email, password }
     socketRef.current?.emit(SOCKET_EVENTS.USER_JOIN, { email, password })
   }
 

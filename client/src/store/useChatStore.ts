@@ -25,6 +25,7 @@ interface ChatStore {
   setActiveTab: (tab: ActiveTab) => void
   showToast: (message: string) => void
   clearToast: () => void
+  reset: () => void
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
@@ -126,4 +127,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   clearToast: () => set({ toastMessage: null, _toastTimer: null }),
+
+  reset: () => {
+    const { _toastTimer } = get()
+    if (_toastTimer) clearTimeout(_toastTimer)
+    set({
+      me: null,
+      onlineUsers: [],
+      rooms: [],
+      activeRoomId: null,
+      messages: {},
+      activeTab: 'friends',
+      toastMessage: null,
+      _toastTimer: null,
+    })
+  },
 }))

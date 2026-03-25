@@ -8,3 +8,4 @@ client/dist/
 .DS_Store
 tests/
 server/data/
+.claide/*

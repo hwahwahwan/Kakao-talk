@@ -79,7 +79,7 @@ export default function App() {
         {activeTab === 'chats' && (
           <ChatList onRoomClick={handleRoomClick} />
         )}
-        {activeTab === 'more' && <MoreTab />}
+        {activeTab === 'more' && <MoreTab onOpenSettings={() => setSettingsOpen(true)} />}
       </div>
 
       {/* 채팅창 */}

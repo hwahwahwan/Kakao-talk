@@ -26,8 +26,8 @@ export default function Avatar({ name, size = 40, className = '' }: Props) {
 
   return (
     <div
-      className={`${bgColor} rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0 ${className}`}
-      style={{ width: size, height: size, fontSize: size * 0.4 }}
+      className={`${bgColor} flex items-center justify-center text-white font-semibold flex-shrink-0 ${className}`}
+      style={{ width: size, height: size, fontSize: size * 0.4, borderRadius: '22%' }}
     >
       {initial}
     </div>
