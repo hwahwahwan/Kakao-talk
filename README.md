@@ -7,25 +7,29 @@
 ### 1. 의존성 설치
 
 ```bash
+npm install
 cd client && npm install
 cd ../server && npm install
 ```
 
-### 2. 서버 실행
+### 2. Ollama 설치 및 모델 다운로드 (최초 1회)
 
 ```bash
-cd server
-npm run dev
-# → http://localhost:4000
+brew install ollama
+OLLAMA_MODELS="/Users/yonghwan/Desktop/Kakao talk/ollama-models" ollama serve
+# 새 터미널에서:
+ollama pull qwen2.5:3b
 ```
 
-### 3. 클라이언트 실행 (새 터미널)
+> 자세한 내용은 `docs/00_ollama-setup.md` 참고
+
+### 3. 전체 실행 (루트 폴더에서)
 
 ```bash
-cd client
 npm run dev
-# → http://localhost:3000
 ```
+
+Ollama + 서버 + 클라이언트가 한 번에 실행됩니다. 종료는 `Ctrl+C`.
 
 ### 4. 채팅 테스트
 
@@ -47,3 +51,5 @@ node test.js
 | `client/.env` | `VITE_SERVER_URL` | `http://localhost:4000` |
 | `server/.env` | `PORT` | `4000` |
 | `server/.env` | `CLIENT_URL` | `http://localhost:3000` |
+| `server/.env` | `OLLAMA_URL` | `http://localhost:11434` |
+| `server/.env` | `OLLAMA_MODEL` | `qwen2.5:3b` |

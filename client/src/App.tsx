@@ -7,6 +7,7 @@ import FriendList from './components/FriendList'
 import ChatList from './components/ChatList'
 import ChatWindow from './components/ChatWindow'
 import MoreTab from './components/MoreTab'
+import ChatbotPanel from './components/ChatbotPanel'
 import SettingsModal from './components/SettingsModal'
 import ToastMessage from './components/ToastMessage'
 
@@ -71,19 +72,28 @@ export default function App() {
       {/* 사이드바 */}
       <Sidebar onOpenSettings={() => setSettingsOpen(true)} />
 
-      {/* 패널 영역 */}
-      <div className="w-[320px] flex-shrink-0 border-r border-[#EBEBEB] flex flex-col">
-        {activeTab === 'friends' && (
-          <FriendList onFriendClick={handleFriendClick} />
-        )}
-        {activeTab === 'chats' && (
-          <ChatList onRoomClick={handleRoomClick} />
-        )}
-        {activeTab === 'more' && <MoreTab onOpenSettings={() => setSettingsOpen(true)} />}
-      </div>
+      {/* 챗봇 탭: 전체 너비 사용 */}
+      {activeTab === 'chatbot' ? (
+        <div className="flex-1 min-w-0">
+          <ChatbotPanel />
+        </div>
+      ) : (
+        <>
+          {/* 패널 영역 */}
+          <div className="w-[320px] flex-shrink-0 border-r border-[#EBEBEB] flex flex-col">
+            {activeTab === 'friends' && (
+              <FriendList onFriendClick={handleFriendClick} />
+            )}
+            {activeTab === 'chats' && (
+              <ChatList onRoomClick={handleRoomClick} />
+            )}
+            {activeTab === 'more' && <MoreTab onOpenSettings={() => setSettingsOpen(true)} />}
+          </div>
 
-      {/* 채팅창 */}
-      <ChatWindow onSend={handleSend} onLeave={handleLeave} />
+          {/* 채팅창 */}
+          <ChatWindow onSend={handleSend} onLeave={handleLeave} />
+        </>
+      )}
 
       {/* 설정 모달 */}
       {settingsOpen && (

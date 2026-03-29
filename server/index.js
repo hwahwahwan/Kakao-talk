@@ -5,6 +5,7 @@ const { Server } = require('socket.io')
 const cors = require('cors')
 const routes = require('./routes')
 const { registerSocketHandlers } = require('./handlers/socketHandlers')
+const { loadDocuments } = require('./services/ragService')
 
 const PORT = parseInt(process.env.PORT, 10) || 4000
 const CLIENT_URL = process.env.CLIENT_URL ?? 'http://localhost:3000'
@@ -23,6 +24,7 @@ io.on('connection', (socket) => {
   registerSocketHandlers(io, socket)
 })
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`)
+  await loadDocuments()
 })

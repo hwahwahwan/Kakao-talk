@@ -66,6 +66,9 @@ export default function Sidebar({ onOpenSettings }: Props) {
 
       {/* 하단 아이콘 */}
       <div className="flex flex-col items-center gap-1">
+        <SidebarBtn active={activeTab === 'chatbot'} onClick={() => handleTab('chatbot')} label="AI 챗봇">
+          <BotIcon active={activeTab === 'chatbot'} />
+        </SidebarBtn>
         <SidebarBtn active={false} onClick={() => showToast('준비 중인 기능입니다')} label="알림">
           <BellIcon />
         </SidebarBtn>
@@ -126,6 +129,17 @@ function MoreIcon({ active }: { active: boolean }) {
       <circle cx="5" cy="12" r="2" />
       <circle cx="12" cy="12" r="2" />
       <circle cx="19" cy="12" r="2" />
+    </svg>
+  )
+}
+
+function BotIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.5 : 2}>
+      <rect x="3" y="11" width="18" height="10" rx="2" />
+      <path d="M12 11V7" />
+      <circle cx="12" cy="5" r="2" />
+      <path d="M8 15h.01M12 15h.01M16 15h.01" strokeWidth="2.5" strokeLinecap="round" />
     </svg>
   )
 }

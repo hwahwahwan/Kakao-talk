@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "dev": "concurrently -n \"ollama,server,client\" -c \"blue,green,yellow\" \"OLLAMA_MODELS='/Users/yonghwan/Desktop/Kakao talk/ollama-models' ollama serve\" \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+  },
   "dependencies": {
     "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
   }
 }

@@ -9,3 +9,8 @@ client/dist/
 tests/
 server/data/
 .claide/*
+WebProg/*
+ollama-models/*
+docs/*
+.bkit/*
+claude.md
