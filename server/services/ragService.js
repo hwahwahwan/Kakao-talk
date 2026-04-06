@@ -6,6 +6,7 @@ const { embed, chunkText } = require('../common/embedding')
 const DOCS_DIR = process.env.DOCS_DIR ?? path.join(__dirname, '../../WebProg')
 const INDEX_PATH = path.join(__dirname, '../data/vector-index.json')
 const TOP_K = 3
+const SIMILARITY_THRESHOLD = 0.3 // 이 점수 미만이면 관련 없다고 판단 → 컨텍스트 미주입
 
 let index = [] // [{source, text, vector}]
 
@@ -78,6 +79,7 @@ async function search(query, topK = TOP_K) {
       const queryVec = await embed(query)
       return index
         .map(c => ({ source: c.source, text: c.text, score: cosineSimilarity(queryVec, c.vector) }))
+        .filter(c => c.score >= SIMILARITY_THRESHOLD)
         .sort((a, b) => b.score - a.score)
         .slice(0, topK)
         .map(c => `[출처: ${c.source}]\n${c.text}`)

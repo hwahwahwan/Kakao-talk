@@ -1,7 +1,7 @@
 const OLLAMA_URL = process.env.OLLAMA_URL ?? 'http://localhost:11434'
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL ?? 'qwen2.5:3b'
 
-const BASE_SYSTEM_PROMPT = '너는 웹 프로그래밍 수업 AI 조교야. 한국어로 친절하고 명확하게 답변해줘. 모르는 내용은 "강의 자료에 없는 내용입니다"라고 솔직하게 말해줘.'
+const BASE_SYSTEM_PROMPT = '너는 친절한 AI 조교야. 반드시 한국어로만 답변해. 절대 다른 언어를 사용하지 마. 어떤 주제든 최선을 다해 답변해줘.'
 
 function buildSystemPrompt(context) {
   if (!context || context.length === 0) return BASE_SYSTEM_PROMPT
