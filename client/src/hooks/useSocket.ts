@@ -33,6 +33,10 @@ export function useSocket() {
 
     socket.on(SOCKET_EVENTS.ROOM_REJOINED, ({ roomId, history }: { roomId: string; history: Message[] }) => {
       store().setHistory(roomId, history)
+      const lastMsg = history[history.length - 1]
+      if (lastMsg) {
+        store().updateRoom(roomId, { lastMessage: lastMsg })
+      }
     })
 
     socket.on(SOCKET_EVENTS.USER_LIST, ({ users }) => {
@@ -55,6 +59,7 @@ export function useSocket() {
     socket.on(SOCKET_EVENTS.ROOM_INVITED, ({ room }: { room: Room }) => {
       const roomWithUnread: Room = { ...room, unreadCount: 0 }
       store().addRoom(roomWithUnread)
+      socket.emit(SOCKET_EVENTS.ROOM_REJOIN, { roomId: room.id })
     })
 
     socket.on(SOCKET_EVENTS.ROOM_ERROR, ({ message }: { message: string }) => {

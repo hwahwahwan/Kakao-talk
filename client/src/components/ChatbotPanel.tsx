@@ -60,24 +60,28 @@ export default function ChatbotPanel() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* 헤더 */}
-      <div className="h-14 px-4 flex items-center border-b border-[#EBEBEB] flex-shrink-0">
-        <Avatar name="AI" size={32} />
+      {/* Header */}
+      <div className="h-16 px-6 flex items-center border-b border-outline-variant/10 flex-shrink-0 bg-white/80 backdrop-blur-md">
+        <div className="size-9 rounded-xl bg-surface-container overflow-hidden flex-shrink-0">
+          <Avatar name="AI" size={36} />
+        </div>
         <div className="ml-3">
-          <p className="text-sm font-semibold text-[#1A1A1A]">AI 챗봇</p>
-          <p className="text-xs text-[#888]">Ollama · Qwen2.5</p>
+          <p className="text-sm font-semibold font-headline text-on-surface">AI 챗봇</p>
+          <p className="text-xs text-secondary font-body">Ollama · Qwen2.5</p>
         </div>
       </div>
 
-      {/* 메시지 목록 */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3 bg-surface hide-scrollbar">
         {messages.map((msg, i) => (
           <MessageItem key={i} message={msg} />
         ))}
         {isLoading && (
           <div className="flex items-start gap-2">
-            <Avatar name="AI" size={28} />
-            <div className="bg-[#F2F2F2] rounded-2xl rounded-tl-sm px-3 py-2 text-sm text-[#888]">
+            <div className="size-8 rounded-xl overflow-hidden flex-shrink-0">
+              <Avatar name="AI" size={32} />
+            </div>
+            <div className="bg-surface-container-lowest rounded-lg rounded-tl-none px-3 py-2 text-sm text-secondary font-body shadow-sm">
               <span className="animate-pulse">...</span>
             </div>
           </div>
@@ -85,27 +89,31 @@ export default function ChatbotPanel() {
         <div ref={bottomRef} />
       </div>
 
-      {/* 입력창 */}
-      <div className="px-4 py-3 border-t border-[#EBEBEB] flex-shrink-0">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            disabled={isLoading}
-            placeholder="메시지를 입력하세요..."
-            className="flex-1 bg-[#F2F2F2] rounded-full px-4 py-2 text-sm outline-none placeholder-[#AAAAAA] disabled:opacity-50"
-          />
+      {/* Input */}
+      <div className="px-6 py-4 border-t border-outline-variant/10 flex-shrink-0 bg-white">
+        <div className="flex items-center gap-3">
+          <div className="flex-1 bg-surface-container rounded-xl px-4 py-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={isLoading}
+              placeholder="메시지를 입력하세요..."
+              className="w-full bg-transparent text-sm outline-none placeholder:text-secondary/50 font-body text-on-surface disabled:opacity-50"
+            />
+          </div>
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="w-9 h-9 bg-[#FEE500] rounded-full flex items-center justify-center disabled:opacity-40 hover:brightness-95 transition-all flex-shrink-0"
+            className="size-11 bg-primary-container text-on-primary-container flex items-center justify-center rounded-xl shadow-sm hover:brightness-95 transition-all disabled:opacity-40 flex-shrink-0"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" strokeWidth="2.5">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
+            <span
+              className="material-symbols-outlined text-[20px]"
+              style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
+            >
+              send
+            </span>
           </button>
         </div>
       </div>
@@ -119,7 +127,7 @@ function MessageItem({ message }: { message: ChatMessage }) {
   if (isUser) {
     return (
       <div className="flex justify-end">
-        <div className="bg-[#FEE500] rounded-2xl rounded-tr-sm px-3 py-2 text-sm text-[#1A1A1A] max-w-[75%] whitespace-pre-wrap break-words">
+        <div className="bg-primary-container text-on-primary-container rounded-lg rounded-tr-none px-3 py-2 text-sm max-w-[75%] whitespace-pre-wrap break-words font-body shadow-sm">
           {message.content}
         </div>
       </div>
@@ -128,8 +136,10 @@ function MessageItem({ message }: { message: ChatMessage }) {
 
   return (
     <div className="flex items-start gap-2">
-      <Avatar name="AI" size={28} />
-      <div className="bg-[#F2F2F2] rounded-2xl rounded-tl-sm px-3 py-2 text-sm text-[#1A1A1A] max-w-[75%] whitespace-pre-wrap break-words">
+      <div className="size-8 rounded-xl overflow-hidden flex-shrink-0">
+        <Avatar name="AI" size={32} />
+      </div>
+      <div className="bg-surface-container-lowest text-on-surface rounded-lg rounded-tl-none px-3 py-2 text-sm max-w-[75%] whitespace-pre-wrap break-words font-body shadow-sm">
         {message.content}
       </div>
     </div>

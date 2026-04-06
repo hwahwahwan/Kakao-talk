@@ -27,7 +27,7 @@ export default function SettingsModal({ onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* 좌측 메뉴 */}
-        <div className="w-[160px] bg-[#F5F5F5] flex flex-col flex-shrink-0">
+        <div className="w-[160px] bg-surface-container-low flex flex-col flex-shrink-0">
           {/* macOS 닫기 버튼 */}
           <div className="px-4 pt-4 pb-3">
             <button
@@ -38,7 +38,7 @@ export default function SettingsModal({ onClose }: Props) {
           </div>
           {/* 타이틀 */}
           <div className="px-4 pb-3">
-            <h2 className="text-[15px] font-bold text-[#1A1A1A]">설정</h2>
+            <h2 className="text-[15px] font-bold text-on-surface">설정</h2>
           </div>
           {/* 메뉴 */}
           <ul className="flex-1 overflow-y-auto">
@@ -48,13 +48,13 @@ export default function SettingsModal({ onClose }: Props) {
                   onClick={() => setActiveMenu(item)}
                   className={`w-full text-left px-4 py-2 text-[13px] flex items-center justify-between transition-colors ${
                     activeMenu === item
-                      ? 'bg-[#E8E8E8] text-[#1A1A1A] font-medium'
-                      : 'text-[#555555] hover:bg-[#E8E8E8]/60'
+                      ? 'bg-surface-container-high text-on-surface font-medium'
+                      : 'text-secondary hover:bg-surface-container-high/60'
                   }`}
                 >
                   <span>{item}</span>
                   {item === '백업' && (
-                    <span className="w-2 h-2 rounded-full bg-[#FE4141] flex-shrink-0" />
+                    <span className="w-2 h-2 rounded-full bg-badge-red flex-shrink-0" />
                   )}
                 </button>
               </li>
@@ -71,7 +71,7 @@ export default function SettingsModal({ onClose }: Props) {
               onToast={() => showToast('준비 중인 기능입니다')}
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center text-[#888888] text-sm">
+            <div className="flex-1 flex items-center justify-center text-secondary text-sm">
               <div className="text-center">
                 <div className="text-3xl mb-2">🚧</div>
                 <button onClick={() => showToast('준비 중인 기능입니다')} className="hover:underline">
@@ -102,33 +102,33 @@ function AccountTab({ me, friendCount, onToast }: AccountTabProps) {
     <div className="p-6 flex flex-col gap-6">
       {/* 계정 정보 */}
       <section>
-        <h3 className="text-[15px] font-bold text-[#1A1A1A] mb-3">계정 정보</h3>
-        <div className="bg-[#F9F9F9] rounded-xl overflow-hidden">
-          <div className="flex items-center px-4 py-3 border-b border-[#EBEBEB]">
-            <span className="w-16 text-[13px] text-[#888888] flex-shrink-0">계정</span>
-            <span className="text-[13px] text-[#1A1A1A]">{displayEmail}</span>
+        <h3 className="text-[15px] font-bold text-on-surface mb-3">계정 정보</h3>
+        <div className="bg-surface rounded-xl overflow-hidden">
+          <div className="flex items-center px-4 py-3 border-b border-outline-variant/20">
+            <span className="w-16 text-[13px] text-secondary flex-shrink-0">계정</span>
+            <span className="text-[13px] text-on-surface">{displayEmail}</span>
           </div>
           <div className="flex items-center px-4 py-3">
-            <span className="w-16 text-[13px] text-[#888888] flex-shrink-0">ID</span>
-            <span className="text-[13px] text-[#1A1A1A]">{displayId}</span>
+            <span className="w-16 text-[13px] text-secondary flex-shrink-0">ID</span>
+            <span className="text-[13px] text-on-surface">{displayId}</span>
           </div>
         </div>
       </section>
 
       {/* 기본 프로필 */}
       <section>
-        <h3 className="text-[15px] font-bold text-[#1A1A1A] mb-3">기본프로필</h3>
-        <div className="bg-[#F9F9F9] rounded-xl px-4 py-3 flex items-center gap-3">
+        <h3 className="text-[15px] font-bold text-on-surface mb-3">기본프로필</h3>
+        <div className="bg-surface rounded-xl px-4 py-3 flex items-center gap-3">
           <Avatar name={me.name} size={44} />
           <div className="flex-1 min-w-0">
-            <div className="text-[14px] font-semibold text-[#1A1A1A]">{me.name}</div>
-            <div className="text-[12px] text-[#888888]">친구 {friendCount}명</div>
+            <div className="text-[14px] font-semibold text-on-surface">{me.name}</div>
+            <div className="text-[12px] text-secondary">친구 {friendCount}명</div>
           </div>
           <div className="flex gap-3">
-            <button onClick={onToast} className="text-[12px] text-[#888888] hover:text-[#1A1A1A] transition-colors">
+            <button onClick={onToast} className="text-[12px] text-secondary hover:text-on-surface transition-colors">
               편집
             </button>
-            <button onClick={onToast} className="text-[12px] text-[#888888] hover:text-[#1A1A1A] transition-colors">
+            <button onClick={onToast} className="text-[12px] text-secondary hover:text-on-surface transition-colors">
               친구관리
             </button>
           </div>
@@ -137,10 +137,10 @@ function AccountTab({ me, friendCount, onToast }: AccountTabProps) {
 
       {/* 멀티프로필 */}
       <section>
-        <h3 className="text-[15px] font-bold text-[#1A1A1A] mb-1">
-          멀티프로필 <span className="font-normal text-[#888888]">(0/3)</span>
+        <h3 className="text-[15px] font-bold text-on-surface mb-1">
+          멀티프로필 <span className="font-normal text-secondary">(0/3)</span>
         </h3>
-        <p className="text-[12px] text-[#888888] mb-3">
+        <p className="text-[12px] text-secondary mb-3">
           내 프로필을 여러 개 만들어 가족, 지인, 직장동료 등 카카오톡 친구별로 다르게 보여줄 수 있습니다.
         </p>
         <button
@@ -153,7 +153,7 @@ function AccountTab({ me, friendCount, onToast }: AccountTabProps) {
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
           </div>
-          <span className="text-[13px] text-[#1A1A1A]">멀티프로필 만들기</span>
+          <span className="text-[13px] text-on-surface">멀티프로필 만들기</span>
         </button>
       </section>
     </div>

@@ -4,8 +4,8 @@ interface Props {
 
 export default function DateDivider({ date }: Props) {
   return (
-    <div className="flex items-center justify-center my-3">
-      <span className="bg-black/20 text-white text-[12px] px-3 py-1 rounded-full">
+    <div className="flex justify-center my-4">
+      <span className="bg-black/10 text-white px-4 py-1 rounded-full text-xs font-label">
         {date}
       </span>
     </div>

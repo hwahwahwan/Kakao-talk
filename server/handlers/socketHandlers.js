@@ -109,7 +109,8 @@ function registerSocketHandlers(io, socket) {
     saveMessage(saved)
 
     const broadcastMsg = { ...saved, senderName: getUserById.get(userId)?.name ?? null }
-    io.to(roomId).emit(SOCKET_EVENTS.MESSAGE_RECEIVE, broadcastMsg)
+    socket.to(roomId).emit(SOCKET_EVENTS.MESSAGE_RECEIVE, broadcastMsg)
+    socket.emit(SOCKET_EVENTS.MESSAGE_RECEIVE, broadcastMsg)
   })
 
   // 채팅방 나가기

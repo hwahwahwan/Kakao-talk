@@ -68,31 +68,32 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-full bg-white">
+    <div className="flex h-full bg-surface">
       {/* 사이드바 */}
       <Sidebar onOpenSettings={() => setSettingsOpen(true)} />
 
       {/* 챗봇 탭: 전체 너비 사용 */}
       {activeTab === 'chatbot' ? (
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 ml-[72px]">
           <ChatbotPanel />
         </div>
-      ) : (
-        <>
-          {/* 패널 영역 */}
-          <div className="w-[320px] flex-shrink-0 border-r border-[#EBEBEB] flex flex-col">
-            {activeTab === 'friends' && (
-              <FriendList onFriendClick={handleFriendClick} />
-            )}
-            {activeTab === 'chats' && (
-              <ChatList onRoomClick={handleRoomClick} />
-            )}
-            {activeTab === 'more' && <MoreTab onOpenSettings={() => setSettingsOpen(true)} />}
+      ) : activeTab === 'chats' ? (
+        activeRoomId ? (
+          <div className="flex-1 min-w-0 ml-[72px] flex">
+            <ChatWindow onSend={handleSend} onLeave={handleLeave} />
           </div>
-
-          {/* 채팅창 */}
-          <ChatWindow onSend={handleSend} onLeave={handleLeave} />
-        </>
+        ) : (
+          <div className="ml-[72px] flex-1 flex flex-col bg-surface">
+            <ChatList onRoomClick={handleRoomClick} />
+          </div>
+        )
+      ) : (
+        <div className="ml-[72px] flex-1 flex flex-col bg-surface">
+          {activeTab === 'friends' && (
+            <FriendList onFriendClick={handleFriendClick} />
+          )}
+          {activeTab === 'more' && <MoreTab onOpenSettings={() => setSettingsOpen(true)} />}
+        </div>
       )}
 
       {/* 설정 모달 */}
