@@ -80,7 +80,7 @@ export function useSocket() {
       }
     })
 
-    socket.on('reconnect', () => {
+    socket.on('connect', () => {
       const creds = credentialsRef.current
       if (creds) {
         socket.emit(SOCKET_EVENTS.USER_JOIN, creds)

@@ -10,6 +10,7 @@ import MoreTab from './components/MoreTab'
 import ChatbotPanel from './components/ChatbotPanel'
 import SettingsModal from './components/SettingsModal'
 import ToastMessage from './components/ToastMessage'
+import CategoryPage from './pages/CategoryPage'
 
 export default function App() {
   const me = useChatStore((s) => s.me)
@@ -72,10 +73,13 @@ export default function App() {
       {/* 사이드바 */}
       <Sidebar onOpenSettings={() => setSettingsOpen(true)} />
 
-      {/* 챗봇 탭: 전체 너비 사용 */}
       {activeTab === 'chatbot' ? (
         <div className="flex-1 min-w-0 ml-[72px]">
           <ChatbotPanel />
+        </div>
+      ) : activeTab === 'category' ? (
+        <div className="flex-1 min-w-0 ml-[72px]">
+          <CategoryPage />
         </div>
       ) : activeTab === 'chats' ? (
         activeRoomId ? (

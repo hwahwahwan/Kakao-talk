@@ -9,6 +9,7 @@ export default defineConfig({
     port: 3000,
   },
   test: {
-    environment: 'node',
+    environment: 'happy-dom',
+    globals: true,
   },
 })

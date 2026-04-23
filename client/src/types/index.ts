@@ -21,4 +21,4 @@ export interface Room {
   unreadCount: number
 }
 
-export type ActiveTab = 'friends' | 'chats' | 'more' | 'chatbot'
+export type ActiveTab = 'friends' | 'chats' | 'more' | 'chatbot' | 'category'

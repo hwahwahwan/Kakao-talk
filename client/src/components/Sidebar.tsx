@@ -43,6 +43,11 @@ export default function Sidebar({ onOpenSettings }: Props) {
         <SidebarBtn active={activeTab === 'more'} onClick={() => handleTab('more')} title="더보기">
           <Icon name="more_horiz" filled={activeTab === 'more'} />
         </SidebarBtn>
+
+        {/* Category tab */}
+        <SidebarBtn active={activeTab === 'category'} onClick={() => handleTab('category')} title="카테고리">
+          <Icon name="grid_view" filled={activeTab === 'category'} />
+        </SidebarBtn>
       </div>
 
       {/* Bottom icons */}
