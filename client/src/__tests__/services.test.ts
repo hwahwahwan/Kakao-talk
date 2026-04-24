@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { fetchMovies } from '../services/movieService'
 import { fetchRecipes } from '../services/foodService'
-import { fetchTravelMock } from '../services/travelService'
+import { fetchTravel } from '../services/travelService'
 import { fetchBooks } from '../services/bookService'
 import { fetchGames } from '../services/gameService'
 import { fetchShopping } from '../services/shoppingService'
@@ -23,7 +23,7 @@ describe('fetchMovies', () => {
     expect(items[0]).toMatchObject({
       id: '1',
       title: 'Test Movie',
-      image: 'https://image.tmdb.org/t/p/w200/test.jpg',
+      image: 'https://image.tmdb.org/t/p/w780/test.jpg',
       subtitle: '2024',
       meta: '⭐ 7.5',
     })
@@ -74,18 +74,24 @@ describe('fetchRecipes', () => {
   })
 })
 
-describe('fetchTravelMock', () => {
-  it('10개 Mock 항목을 반환한다', async () => {
-    const items = await fetchTravelMock()
+describe('fetchTravel', () => {
+  it('10개 항목을 반환한다', async () => {
+    const items = await fetchTravel()
     expect(items).toHaveLength(10)
   })
 
-  it('각 항목에 id와 title이 존재한다', async () => {
-    const items = await fetchTravelMock()
+  it('각 항목에 id, title, image가 존재한다', async () => {
+    const items = await fetchTravel()
     items.forEach((item) => {
       expect(item.id).toBeTruthy()
       expect(item.title).toBeTruthy()
+      expect(item.image).toBeTruthy()
     })
+  })
+
+  it('이미지가 600x800 고해상도 URL이다', async () => {
+    const items = await fetchTravel()
+    expect(items[0].image).toContain('600/800')
   })
 })
 
@@ -112,6 +118,16 @@ describe('fetchBooks', () => {
     })
     const items = await fetchBooks()
     expect(items[0].meta).toBe('12,000원')
+  })
+
+  it('카카오 CDN 썸네일 URL을 고해상도로 변환한다', async () => {
+    mockFetch({
+      documents: [
+        { isbn: '789', title: '책', thumbnail: 'https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=https://t1.daumcdn.net/book/abc', authors: [], sale_price: 0, price: 10000 },
+      ],
+    })
+    const items = await fetchBooks()
+    expect(items[0].image).toContain('R480x640.q90')
   })
 
   it('API 실패 시 에러를 던진다', async () => {

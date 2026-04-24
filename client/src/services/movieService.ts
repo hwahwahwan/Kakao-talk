@@ -1,12 +1,12 @@
 import type { RecommendItem } from '../types/recommend'
 
-const IMG = 'https://image.tmdb.org/t/p/w200'
+const IMG = 'https://image.tmdb.org/t/p/w780'
 
 export async function fetchMovies(): Promise<RecommendItem[]> {
   const res = await fetch('/api/recommend/movie')
   if (!res.ok) throw new Error('TMDB fetch failed')
   const json = await res.json()
-  return json.results.slice(0, 10).map((m: any) => ({
+  return json.results.slice(0, 4).map((m: any) => ({
     id: String(m.id),
     title: m.title,
     image: m.poster_path ? IMG + m.poster_path : undefined,

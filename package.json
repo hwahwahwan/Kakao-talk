@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "concurrently -n \"ollama,server,client\" -c \"blue,green,yellow\" \"OLLAMA_MODELS='/Users/yonghwan/Desktop/Kakao talk/ollama-models' ollama serve\" \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+    "dev": "concurrently -n \"ollama,server,client,gaze\" -c \"blue,green,yellow,magenta\" \"OLLAMA_MODELS='/Users/yonghwan/Desktop/Kakao talk/ollama-models' ollama serve\" \"npm run dev --prefix server\" \"npm run dev --prefix client\" \"lsof -ti:8765 | xargs kill -9 2>/dev/null; gaze-server/venv/bin/python gaze-server/server.py\""
   },
   "dependencies": {
     "socket.io-client": "^4.8.3"

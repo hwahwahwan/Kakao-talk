@@ -7,10 +7,8 @@ import { useCategoryGaze } from '../hooks/useCategoryGaze'
 import { loadZoneCalibration, clearZoneCalibration } from '../utils/calibrationStorage'
 import { CATEGORIES, type CategoryId } from '../constants/categories'
 
-type PanelState = [CategoryId | null, CategoryId | null]
-
 export default function CategoryPage() {
-  const [panels, setPanels] = useState<PanelState>([null, null])
+  const [selected, setSelected] = useState<CategoryId | null>(null)
   const [calibrating, setCalibrating] = useState(false)
   const { gazeData, connected } = useGazeTracking()
   const isZoneCalibrated = loadZoneCalibration() !== null
@@ -18,14 +16,7 @@ export default function CategoryPage() {
   const categoryIds = useMemo(() => CATEGORIES.map((c) => c.id), [])
 
   const handleSelect = useCallback((id: CategoryId) => {
-    setPanels((prev) => {
-      if (prev[0] === id || prev[1] === id) return prev
-      return [prev[1], id]
-    })
-  }, [])
-
-  const handleDeselect = useCallback((panelIndex: 1 | 2) => {
-    setPanels((prev) => panelIndex === 1 ? [null, prev[1]] : [prev[0], null])
+    setSelected(id)
   }, [])
 
   const handleCalibrationComplete = useCallback(() => {
@@ -60,12 +51,11 @@ export default function CategoryPage() {
       </header>
 
       <div className="border-b border-outline-variant/10 bg-surface-container-lowest">
-        <CategoryGrid selectedIds={panels} onSelect={handleSelect} />
+        <CategoryGrid selectedIds={[selected]} onSelect={handleSelect} />
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        <CategoryPanel categoryId={panels[0]} panelIndex={1} onClose={() => handleDeselect(1)} />
-        <CategoryPanel categoryId={panels[1]} panelIndex={2} onClose={() => handleDeselect(2)} />
+        <CategoryPanel categoryId={selected} />
       </div>
 
       {calibrating && (

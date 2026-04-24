@@ -1,6 +1,6 @@
 import type { RecommendItem } from '../types/recommend'
 
-const P = (seed: string) => `https://picsum.photos/seed/${seed}/200/200`
+const P = (seed: string) => `https://picsum.photos/seed/${seed}/600/800`
 
 const MOCK_TRAVEL: RecommendItem[] = [
   { id: '1', title: '경복궁', subtitle: '서울 종로구', image: P('gyeongbok') },
@@ -15,7 +15,6 @@ const MOCK_TRAVEL: RecommendItem[] = [
   { id: '10', title: '경주 불국사', subtitle: '경북 경주시', image: P('bulguksa') },
 ]
 
-// 한국관광공사 API 승인 후 이 함수 내부만 교체
-export async function fetchTravelMock(): Promise<RecommendItem[]> {
+export async function fetchTravel(): Promise<RecommendItem[]> {
   return MOCK_TRAVEL
 }

@@ -8,7 +8,7 @@ export async function fetchShopping(query: string): Promise<RecommendItem[]> {
   const res = await fetch(`/api/recommend/shopping?query=${encodeURIComponent(query)}`)
   if (!res.ok) throw new Error('Naver shopping fetch failed')
   const json = await res.json()
-  return json.items.map((item: any, i: number) => ({
+  return json.items.slice(0, 4).map((item: any, i: number) => ({
     id: item.productId ?? String(i),
     title: stripTags(item.title),
     image: item.image || undefined,

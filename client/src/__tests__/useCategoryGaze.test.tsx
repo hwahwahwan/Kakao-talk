@@ -12,7 +12,7 @@ const BASE_GAZE: GazeData = {
 const LEFT_GAZE: GazeData = { ...BASE_GAZE, isLeft: true, isCenter: false }
 const RIGHT_GAZE: GazeData = { ...BASE_GAZE, isRight: true, isCenter: false }
 
-const CATEGORY_IDS = ['movie', 'travel', 'book'] as const
+const CATEGORY_IDS = ['movie', 'shopping', 'book'] as const
 
 describe('useCategoryGaze (zone-based)', () => {
   let nowValue = 0
@@ -38,7 +38,7 @@ describe('useCategoryGaze (zone-based)', () => {
     return startMs + count * stepMs
   }
 
-  it('isCenter 10프레임 후 2000ms 지나면 onSelect(travel)가 호출된다', () => {
+  it('isCenter 10프레임 후 2000ms 지나면 onSelect(shopping)가 호출된다', () => {
     const onSelect = vi.fn()
 
     const { rerender } = renderHook(
@@ -52,7 +52,7 @@ describe('useCategoryGaze (zone-based)', () => {
     nowValue = t + 2100
     act(() => rerender({ gd: { ...BASE_GAZE } }))
 
-    expect(onSelect).toHaveBeenCalledWith('travel')
+    expect(onSelect).toHaveBeenCalledWith('shopping')
     expect(onSelect).toHaveBeenCalledTimes(1)
   })
 
@@ -109,7 +109,7 @@ describe('useCategoryGaze (zone-based)', () => {
 
     nowValue = t + 2100
     act(() => rerender({ gd: { ...BASE_GAZE } }))
-    expect(onSelect).toHaveBeenCalledWith('travel')
+    expect(onSelect).toHaveBeenCalledWith('shopping')
   })
 
   it('gazeData가 null이면 onSelect가 호출되지 않는다', () => {
@@ -139,7 +139,7 @@ describe('useCategoryGaze (zone-based)', () => {
 
     nowValue = t + 600
     act(() => rerender({ gd: { ...BASE_GAZE } }))
-    expect(onSelect).toHaveBeenCalledWith('travel')
+    expect(onSelect).toHaveBeenCalledWith('shopping')
   })
 
   it('onSelect 호출 후 타이머가 초기화되어 연속 중복 호출이 방지된다', () => {
