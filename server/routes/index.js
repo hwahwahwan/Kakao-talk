@@ -1,10 +1,12 @@
 const { Router } = require('express')
 const { translateToKorean } = require('../translate')
 const chatbotRouter = require('./chatbot')
+const recommendRouter = require('./recommend')
 
 const router = Router()
 
 router.use(chatbotRouter)
+router.use(recommendRouter)
 
 router.get('/health', (_req, res) => res.json({ status: 'ok' }))
 

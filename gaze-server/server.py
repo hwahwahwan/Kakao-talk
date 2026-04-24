@@ -41,8 +41,8 @@ async def gaze_loop():
         }
 
         pupils = gaze.pupil_left_coords(), gaze.pupil_right_coords()
-        data["pupilLeft"] = list(pupils[0]) if pupils[0] else None
-        data["pupilRight"] = list(pupils[1]) if pupils[1] else None
+        data["pupilLeft"] = [int(v) for v in pupils[0]] if pupils[0] else None
+        data["pupilRight"] = [int(v) for v in pupils[1]] if pupils[1] else None
 
         await broadcast(data)
         await asyncio.sleep(0.033)  # ~30fps

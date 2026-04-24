@@ -1,21 +1,30 @@
-export type CategoryId = 'movie' | 'food' | 'travel' | 'book' | 'game' | 'fashion' | 'electronics'
+import type { RecommendItem } from '../types/recommend'
+import { fetchMovies } from '../services/movieService'
+import { fetchTravelMock } from '../services/travelService'
+import { fetchBooks } from '../services/bookService'
+
+export type CategoryId = 'movie' | 'travel' | 'book'
 
 export interface Category {
   id: CategoryId
   label: string
   emoji: string
+  zone: string
 }
 
+// Order matters: index 0=left zone, 1=center zone, 2=right zone
 export const CATEGORIES: Category[] = [
-  { id: 'movie', label: '영화', emoji: '🎬' },
-  { id: 'food', label: '음식', emoji: '🍜' },
-  { id: 'travel', label: '여행', emoji: '✈️' },
-  { id: 'book', label: '책', emoji: '📚' },
-  { id: 'game', label: '게임', emoji: '🎮' },
-  { id: 'fashion', label: '패션', emoji: '👗' },
-  { id: 'electronics', label: '전자기기', emoji: '💻' },
+  { id: 'movie', label: '영화', emoji: '🎬', zone: '← 왼쪽' },
+  { id: 'travel', label: '여행', emoji: '✈️', zone: '정면' },
+  { id: 'book', label: '책', emoji: '📚', zone: '오른쪽 →' },
 ]
 
 export const CATEGORY_MAP: Record<CategoryId, Category> = Object.fromEntries(
   CATEGORIES.map((c) => [c.id, c])
 ) as Record<CategoryId, Category>
+
+export const CATEGORY_SERVICE_MAP: Record<CategoryId, () => Promise<RecommendItem[]>> = {
+  movie:  fetchMovies,
+  travel: fetchTravelMock,
+  book:   fetchBooks,
+}

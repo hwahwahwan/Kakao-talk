@@ -7,21 +7,22 @@ interface Props {
 
 export default function CategoryGrid({ selectedIds, onSelect }: Props) {
   return (
-    <div className="flex items-center justify-center gap-1.5 py-4 px-6 flex-wrap">
+    <div className="flex items-center justify-center gap-8 py-8 px-12">
       {CATEGORIES.map((cat) => {
         const isSelected = selectedIds.includes(cat.id)
         return (
           <button
             key={cat.id}
             onClick={() => onSelect(cat.id)}
-            className={`flex flex-col items-center gap-1.5 px-4 py-2.5 rounded-xl transition-all ${
+            className={`flex flex-col items-center gap-2 px-10 py-6 rounded-2xl transition-all w-52 ${
               isSelected
                 ? 'bg-primary-container text-on-surface scale-105 shadow-sm'
                 : 'hover:bg-surface-container text-secondary'
             }`}
           >
-            <span className="text-2xl leading-none">{cat.emoji}</span>
-            <span className="text-[11px] font-medium font-label">{cat.label}</span>
+            <span className="text-4xl leading-none">{cat.emoji}</span>
+            <span className="text-base font-medium font-label">{cat.label}</span>
+            <span className="text-xs text-secondary/60 mt-1">{cat.zone}</span>
           </button>
         )
       })}

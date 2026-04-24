@@ -1,13 +1,30 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, cleanup } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react'
 import CategoryGrid from '../components/CategoryGrid'
 import CategoryPanel from '../components/CategoryPanel'
 import CategoryPage from '../pages/CategoryPage'
-import { CATEGORIES } from '../constants/categories'
+import { CATEGORIES, CATEGORY_SERVICE_MAP } from '../constants/categories'
+import type { RecommendItem } from '../types/recommend'
 
 vi.mock('../hooks/useGazeTracking', () => ({
   useGazeTracking: () => ({ gazeData: null, connected: false, error: null }),
 }))
+
+// 서비스 함수를 카테고리별 Mock 데이터로 대체
+vi.mock('../constants/categories', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../constants/categories')>()
+  const makeMockItems = (label: string): RecommendItem[] =>
+    Array.from({ length: 3 }, (_, i) => ({
+      id: `${label}-${i}`,
+      title: `${label} 추천 ${i + 1}`,
+    }))
+  return {
+    ...actual,
+    CATEGORY_SERVICE_MAP: Object.fromEntries(
+      actual.CATEGORIES.map((c) => [c.id, () => Promise.resolve(makeMockItems(c.label))])
+    ),
+  }
+})
 
 beforeEach(() => cleanup())
 
@@ -59,14 +76,14 @@ describe('CategoryPanel', () => {
     expect(screen.getByText(/카테고리를 선택하세요/)).toBeTruthy()
   })
 
-  it('categoryId가 있으면 카테고리명을 표시한다', () => {
+  it('categoryId가 있으면 카테고리명을 표시한다', async () => {
     render(<CategoryPanel categoryId="movie" panelIndex={1} />)
-    expect(screen.getByText('영화')).toBeTruthy()
+    await waitFor(() => expect(screen.getByText('영화')).toBeTruthy())
   })
 
-  it('활성 패널에 RecommendCard가 정확히 3개 렌더링된다', () => {
+  it('활성 패널에 RecommendCard가 정확히 3개 렌더링된다', async () => {
     render(<CategoryPanel categoryId="movie" panelIndex={1} />)
-    expect(screen.getAllByText(/영화 추천/)).toHaveLength(3)
+    await waitFor(() => expect(screen.getAllByText(/영화 추천/)).toHaveLength(3))
   })
 
   it('panelIndex 번호가 화면에 반영된다', () => {
@@ -76,13 +93,15 @@ describe('CategoryPanel', () => {
     expect(screen.getByText(/패널 2/)).toBeTruthy()
   })
 
-  it('모든 카테고리에 대해 올바른 라벨과 카드 3개가 표시된다', () => {
-    CATEGORIES.forEach((cat) => {
+  it('모든 카테고리에 대해 올바른 라벨과 카드 3개가 표시된다', async () => {
+    for (const cat of CATEGORIES) {
       cleanup()
       render(<CategoryPanel categoryId={cat.id} panelIndex={1} />)
-      expect(screen.getByText(cat.label)).toBeTruthy()
-      expect(screen.getAllByText(new RegExp(`${cat.label} 추천`))).toHaveLength(3)
-    })
+      await waitFor(() => {
+        expect(screen.getByText(cat.label)).toBeTruthy()
+        expect(screen.getAllByText(new RegExp(`${cat.label} 추천`))).toHaveLength(3)
+      })
+    }
   })
 })
 
@@ -95,45 +114,96 @@ describe('CategoryPage 패널 상태 전환', () => {
     expect(screen.getAllByText(/카테고리를 선택하세요/)).toHaveLength(2)
   })
 
-  it('카테고리 클릭 시 해당 패널이 활성화되고 빈 패널이 1개 남는다 (FR-04)', () => {
+  it('카테고리 클릭 시 해당 패널이 활성화되고 빈 패널이 1개 남는다 (FR-04)', async () => {
     render(<CategoryPage />)
     fireEvent.click(screen.getByRole('button', { name: /영화/ }))
-    expect(screen.getAllByText(/영화 추천/)).toHaveLength(3)
-    expect(screen.getAllByText(/카테고리를 선택하세요/)).toHaveLength(1)
+    await waitFor(() => {
+      expect(screen.getAllByText(/영화 추천/)).toHaveLength(3)
+      expect(screen.getAllByText(/카테고리를 선택하세요/)).toHaveLength(1)
+    })
   })
 
-  it('두 번째 카테고리 클릭 시 두 패널 모두 활성화된다', () => {
-    render(<CategoryPage />)
-    fireEvent.click(screen.getByRole('button', { name: /영화/ }))
-    fireEvent.click(screen.getByRole('button', { name: /음식/ }))
-    expect(screen.queryAllByText(/카테고리를 선택하세요/)).toHaveLength(0)
-    expect(screen.getAllByText(/영화 추천/)).toHaveLength(3)
-    expect(screen.getAllByText(/음식 추천/)).toHaveLength(3)
-  })
-
-  it('3번째 카테고리 클릭 시 가장 오래된 패널이 교체된다 (FR-05)', () => {
-    render(<CategoryPage />)
-    fireEvent.click(screen.getByRole('button', { name: /영화/ }))  // [null, movie]
-    fireEvent.click(screen.getByRole('button', { name: /음식/ }))  // [movie, food]
-    fireEvent.click(screen.getByRole('button', { name: /여행/ }))  // [food, travel]
-
-    expect(screen.queryAllByText(/영화 추천/)).toHaveLength(0)  // 영화 제거됨
-    expect(screen.getAllByText(/음식 추천/)).toHaveLength(3)     // 음식 유지
-    expect(screen.getAllByText(/여행 추천/)).toHaveLength(3)     // 여행 추가
-  })
-
-  it('이미 선택된 카테고리 재클릭 시 패널 상태가 변경되지 않는다 (FR-06)', () => {
+  it('두 번째 카테고리 클릭 시 두 패널 모두 활성화된다', async () => {
     render(<CategoryPage />)
     fireEvent.click(screen.getByRole('button', { name: /영화/ }))
     fireEvent.click(screen.getByRole('button', { name: /음식/ }))
-    fireEvent.click(screen.getByRole('button', { name: /영화/ }))  // 재클릭
+    await waitFor(() => {
+      expect(screen.queryAllByText(/카테고리를 선택하세요/)).toHaveLength(0)
+      expect(screen.getAllByText(/영화 추천/)).toHaveLength(3)
+      expect(screen.getAllByText(/음식 추천/)).toHaveLength(3)
+    })
+  })
 
-    expect(screen.getAllByText(/영화 추천/)).toHaveLength(3)
-    expect(screen.getAllByText(/음식 추천/)).toHaveLength(3)
+  it('3번째 카테고리 클릭 시 가장 오래된 패널이 교체된다 (FR-05)', async () => {
+    render(<CategoryPage />)
+    fireEvent.click(screen.getByRole('button', { name: /영화/ }))
+    fireEvent.click(screen.getByRole('button', { name: /음식/ }))
+    fireEvent.click(screen.getByRole('button', { name: /여행/ }))
+    await waitFor(() => {
+      expect(screen.queryAllByText(/영화 추천/)).toHaveLength(0)
+      expect(screen.getAllByText(/음식 추천/)).toHaveLength(3)
+      expect(screen.getAllByText(/여행 추천/)).toHaveLength(3)
+    })
+  })
+
+  it('이미 선택된 카테고리 재클릭 시 패널 상태가 변경되지 않는다 (FR-06)', async () => {
+    render(<CategoryPage />)
+    fireEvent.click(screen.getByRole('button', { name: /영화/ }))
+    fireEvent.click(screen.getByRole('button', { name: /음식/ }))
+    await waitFor(() => expect(screen.getAllByText(/영화 추천/)).toHaveLength(3))
+    fireEvent.click(screen.getByRole('button', { name: /영화/ }))
+    await waitFor(() => {
+      expect(screen.getAllByText(/영화 추천/)).toHaveLength(3)
+      expect(screen.getAllByText(/음식 추천/)).toHaveLength(3)
+    })
   })
 
   it('시선 추적 서버 미연결 상태 텍스트가 헤더에 표시된다 (FR-09)', () => {
     render(<CategoryPage />)
     expect(screen.getByText('시선 추적 대기 중')).toBeTruthy()
+  })
+})
+
+// ──────────────────────────────────────────────
+// CategoryPanel — 상태별 UI (loading / error)
+// ──────────────────────────────────────────────
+describe('CategoryPanel 상태별 UI', () => {
+  afterEach(() => cleanup())
+
+  it('API 호출 중 스켈레톤(animate-pulse) 3개가 표시된다', () => {
+    const original = CATEGORY_SERVICE_MAP.movie
+    CATEGORY_SERVICE_MAP.movie = () => new Promise(() => {})
+
+    render(<CategoryPanel categoryId="movie" panelIndex={1} />)
+    const skeletons = document.querySelectorAll('.animate-pulse')
+    expect(skeletons.length).toBe(3)
+
+    CATEGORY_SERVICE_MAP.movie = original
+  })
+
+  it('API 오류 시 에러 메시지가 표시된다', async () => {
+    const original = CATEGORY_SERVICE_MAP.movie
+    CATEGORY_SERVICE_MAP.movie = () => Promise.reject(new Error('API error'))
+
+    render(<CategoryPanel categoryId="movie" panelIndex={1} />)
+    await waitFor(() => expect(screen.getByText(/데이터를 불러올 수 없습니다/)).toBeTruthy())
+
+    CATEGORY_SERVICE_MAP.movie = original
+  })
+
+  it('categoryId 변경 시 이전 카드가 사라지고 스켈레톤이 표시된다', async () => {
+    const { rerender } = render(<CategoryPanel categoryId="movie" panelIndex={1} />)
+    await waitFor(() => expect(screen.getAllByText(/영화 추천/)).toHaveLength(3))
+
+    const original = CATEGORY_SERVICE_MAP.food
+    CATEGORY_SERVICE_MAP.food = () => new Promise(() => {})
+
+    rerender(<CategoryPanel categoryId="food" panelIndex={1} />)
+
+    expect(screen.queryAllByText(/영화 추천/)).toHaveLength(0)
+    const skeletons = document.querySelectorAll('.animate-pulse')
+    expect(skeletons.length).toBe(3)
+
+    CATEGORY_SERVICE_MAP.food = original
   })
 })
