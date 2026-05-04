@@ -16,9 +16,16 @@ connected_clients: set = set()
 
 
 async def broadcast(data: dict):
-    if connected_clients:
-        message = json.dumps(data)
-        await asyncio.gather(*[client.send(message) for client in connected_clients])
+    if not connected_clients:
+        return
+    message = json.dumps(data)
+    results = await asyncio.gather(
+        *[client.send(message) for client in list(connected_clients)],
+        return_exceptions=True,
+    )
+    for client, result in zip(list(connected_clients), results):
+        if isinstance(result, Exception):
+            connected_clients.discard(client)
 
 
 async def gaze_loop():
@@ -29,7 +36,11 @@ async def gaze_loop():
             await asyncio.sleep(0.1)
             continue
 
-        gaze.refresh(frame)
+        try:
+            gaze.refresh(frame)
+        except cv2.error:
+            await asyncio.sleep(0.033)
+            continue
 
         data = {
             "isBlinking": gaze.is_blinking(),
