@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { GazeData } from './useGazeTracking'
 import type { CategoryId } from '../constants/categories'
-import { loadZoneCalibration } from '../utils/calibrationStorage'
+import { detectGazeZone } from '../utils/gazeUtils'
 
 interface UseCategoryGazeOptions {
   gazeData: GazeData | null
@@ -12,22 +12,11 @@ interface UseCategoryGazeOptions {
 
 const CONSENSUS_FRAMES = 10
 const CONSENSUS_THRESHOLD = 7
+const ZONE_INDEX = { left: 0, center: 1, right: 2 } as const
 
 function detectZone(gazeData: GazeData, categoryIds: CategoryId[]): CategoryId | null {
-  const ratio = gazeData.horizontalRatio
-  const cal = loadZoneCalibration()
-
-  if (ratio != null && cal) {
-    if (ratio >= cal.leftThreshold) return categoryIds[0] ?? null
-    if (ratio <= cal.rightThreshold) return categoryIds[2] ?? null
-    return categoryIds[1] ?? null
-  }
-
-  // Fallback to library flags when no calibration saved
-  if (gazeData.isLeft) return categoryIds[0] ?? null
-  if (gazeData.isCenter) return categoryIds[1] ?? null
-  if (gazeData.isRight) return categoryIds[2] ?? null
-  return null
+  const zone = detectGazeZone(gazeData)
+  return zone ? (categoryIds[ZONE_INDEX[zone]] ?? null) : null
 }
 
 export function useCategoryGaze({

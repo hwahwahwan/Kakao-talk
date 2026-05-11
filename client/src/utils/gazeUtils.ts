@@ -1,6 +1,24 @@
 import type { GazeData } from '../hooks/useGazeTracking'
 import { GAZE_H_MIN, GAZE_H_MAX, GAZE_V_MIN, GAZE_V_MAX, GAZE_HIT_PADDING } from '../constants/gazeConfig'
-import { loadCalibration } from './calibrationStorage'
+import { loadCalibration, loadZoneCalibration } from './calibrationStorage'
+
+export type GazeZone = 'left' | 'center' | 'right'
+
+export function detectGazeZone(gazeData: GazeData): GazeZone | null {
+  const ratio = gazeData.horizontalRatio
+  const cal = loadZoneCalibration()
+
+  if (ratio != null && cal) {
+    if (ratio >= cal.leftThreshold) return 'left'
+    if (ratio <= cal.rightThreshold) return 'right'
+    return 'center'
+  }
+
+  if (gazeData.isLeft) return 'left'
+  if (gazeData.isRight) return 'right'
+  if (gazeData.isCenter) return 'center'
+  return null
+}
 
 const norm = (v: number, min: number, max: number) =>
   Math.max(0, Math.min(1, (v - min) / (max - min)))

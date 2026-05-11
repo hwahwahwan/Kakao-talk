@@ -11,6 +11,7 @@ import ChatbotPanel from './components/ChatbotPanel'
 import SettingsModal from './components/SettingsModal'
 import ToastMessage from './components/ToastMessage'
 import CategoryPage from './pages/CategoryPage'
+import GazeCursor from './components/GazeCursor'
 
 export default function App() {
   const me = useChatStore((s) => s.me)
@@ -107,6 +108,9 @@ export default function App() {
 
       {/* 토스트 */}
       <ToastMessage />
+
+      {/* 시선 커서 */}
+      <GazeCursor />
     </div>
   )
 }
