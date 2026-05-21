@@ -13,5 +13,7 @@ WebProg/*
 ollama-models/*
 docs/*
 .bkit/*
+.bkit-memory.json
+.claude/
 claude.md
 .env
