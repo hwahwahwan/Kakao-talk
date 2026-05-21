@@ -4,6 +4,22 @@
 
 <br>
 
+## 미리보기
+
+| 홈화면 | 채팅화면 |
+|:---:|:---:|
+| <img width="488" alt="홈화면" src="https://github.com/user-attachments/assets/bfe89c26-5a1e-41f8-9ebf-bb1c50b827ce" /> | <img width="488" alt="채팅화면" src="https://github.com/user-attachments/assets/de1bd073-0626-4a64-98f8-c3a58d448022" /> |
+
+| 더보기 탭 | 카테고리 · 시선 추적 |
+|:---:|:---:|
+| <img width="488" alt="더보기" src="https://github.com/user-attachments/assets/1e11c67a-9637-4bfe-bb4d-e01bb1e57e8d" /> | <img width="488" alt="카테고리 시선추적" src="https://github.com/user-attachments/assets/f3900a93-3d0a-4eef-b509-8dde1ee8e34f" /> |
+
+| AI 챗봇 | 설정 화면 |
+|:---:|:---:|
+| <img width="488" alt="AI 챗봇" src="https://github.com/user-attachments/assets/9f939b49-07d2-4f39-b2ad-1a3fe4722984" /> | <img width="488" alt="설정" src="https://github.com/user-attachments/assets/03adcd16-8f81-43dc-bad4-8be644b239a7" /> |
+
+<br>
+
 ## 팀원 구성
 
 <div align="center">

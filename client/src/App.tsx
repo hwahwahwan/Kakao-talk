@@ -109,8 +109,8 @@ export default function App() {
       {/* 토스트 */}
       <ToastMessage />
 
-      {/* 시선 커서 */}
-      <GazeCursor />
+      {/* 시선 커서 — 카테고리 탭에서만 표시 */}
+      {activeTab === 'category' && <GazeCursor />}
     </div>
   )
 }
